@@ -51,7 +51,7 @@
         <div class="row">
             <div class="4u">
                 <section class="special box_white">
-                    <a href="#" class="image fit"><img src="/images/pic04.jpg" alt=""/></a>
+                    <a href="#" class="image fit"><img src="/images/pic03.jpg" alt=""/></a>
                     <h3 th:inline="text">[[${user.firstName}]]</h3>
                     <p th:inline="text">[[${user.email}]]</p>
                     <ul class="actions">
@@ -64,6 +64,12 @@
                     <hr/>
                     <div th:each="comment :${user.comments}">
 
+                        <div class="row">
+                            <label class="4u right">Rating: </label>
+                            <div class="8u">
+                                <label th:inline="text">[[${comment.rating}]]</label>
+                            </div>
+                        </div>
                         <div class="row">
                             <label class="4u right">Date: </label>
                             <div class="8u">

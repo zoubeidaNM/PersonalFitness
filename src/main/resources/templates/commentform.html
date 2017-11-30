@@ -14,6 +14,8 @@
     <link href="/vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
     <!-- Custom styles for this template-->
     <link href="/css/sb-admin.css" rel="stylesheet">
+
+
 </head>
 
 <body class="body_bg2">
@@ -21,20 +23,34 @@
     <div class="card card-register mx-auto mt-5 border_solid">
         <div class="card-header">User Comment</div>
         <div class="card-body">
+            <form>
+                <fieldset>
+                <span class="star-cb-group">
+                  <input type="radio" id="rating-5" name="rating" value="5" /><label for="rating-5">5</label>
+                  <input type="radio" id="rating-4" name="rating" value="4" checked="checked" /><label for="rating-4">4</label>
+                  <input type="radio" id="rating-3" name="rating" value="3" /><label for="rating-3">3</label>
+                  <input type="radio" id="rating-2" name="rating" value="2" /><label for="rating-2">2</label>
+                  <input type="radio" id="rating-1" name="rating" value="1" /><label for="rating-1">1</label>
+                  <input type="radio" id="rating-0" name="rating" value="0" class="star-cb-clear" /><label for="rating-0">0</label>
+                </span>
+                </fieldset>
+            </form>
+
+
+
+
             <form autocomplete="off" action="#" th:action="@{/user/comment}" th:object="${comment}" method="post">
                 <div th:if="${error}" class="has-error text-danger" th:text="${error_message}"></div>
                 <input type="hidden" th:field="*{id}"/>
 
 
-
                 <!-- Text input-->
+
                 <div class="form-group">
                     <label for="textinput5">Comment</label>
                     <div>
-                        <input id="textinput5" name="textinput5" placeholder="Enter a comment"
-                               class="form-control input-md" type="text" th:field="*{content}">
-                        <span th:if="${#fields.hasErrors('content')}"
-                              th:errors="*{content}">Content error</span>
+                        <textarea rows ="5" id="textinput5" name="textinput5"
+                                  class="form-control input-md"  th:field="*{content}"></textarea>
 
                     </div>
                 </div>
@@ -58,6 +74,13 @@
 <script src="/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 <!-- Core plugin JavaScript-->
 <script src="/vendor/jquery-easing/jquery.easing.min.js"></script>
+<script>var logID = 'log',
+    log = $('<div id="'+logID+'"></div>');
+$('body').append(log);
+$('[type*="radio"]').change(function () {
+    var me = $(this);
+    log.html(me.attr('value'));
+});</script>
 </body>
 
 </html>
