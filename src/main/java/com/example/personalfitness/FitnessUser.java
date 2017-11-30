@@ -80,43 +80,28 @@ public class FitnessUser {
 
     private ArrayList<String> specialities;
 
+    private String headshot;
+
+    private boolean userRequestFlag;
+
+    private boolean trainerRequestFlag;
+
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(joinColumns = @JoinColumn(name ="user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Collection<UserRole> roles;
 
 
-    public Set<Request> getRequests() {
-        return requests;
-    }
-
-    public void setRequests(Set<Request> requests) {
-        this.requests = requests;
-    }
 
     @ManyToMany
     private Set<Request> requests;
 
-
-    public Set<Comment> getComments() {
-        return comments;
-    }
-
-    public void setComments(Set<Comment> comments) {
-        this.comments = comments;
-    }
-
-    @OneToMany(mappedBy="user",
-    cascade=CascadeType.ALL,
-    fetch=FetchType.EAGER)
-    public Set<Comment> comments;
 
     public FitnessUser() {
         areas = new ArrayList<String>();
         specialities = new ArrayList<String>();
         roles = new HashSet<UserRole>();
         requests= new HashSet<Request>();
-        comments=new HashSet<Comment>();
         areas.add("Montgomery County");
         areas.add("Frederick County");
         areas.add("Prince George's County");
@@ -128,7 +113,21 @@ public class FitnessUser {
         specialities.add("Aerobics");
         specialities.add("Dance");
 
+        headshot="/images/pic04.jpg";
+
+        userRequestFlag = false;
+        trainerRequestFlag = false;
+
     }
+
+    public Set<Request> getRequests() {
+        return requests;
+    }
+
+    public void setRequests(Set<Request> requests) {
+        this.requests = requests;
+    }
+
 
     public long getId() {
         return id;
@@ -262,5 +261,27 @@ public class FitnessUser {
         requests.add(request);
     }
 
-    public void addComment(Comment comment){comments.add(comment);}
+    public String getHeadshot() {
+        return headshot;
+    }
+
+    public void setHeadshot(String headshot) {
+        this.headshot = headshot;
+    }
+
+    public boolean isUserRequestFlag() {
+        return userRequestFlag;
+    }
+
+    public void setUserRequestFlag(boolean userRequestFlag) {
+        this.userRequestFlag = userRequestFlag;
+    }
+
+    public boolean isTrainerRequestFlag() {
+        return trainerRequestFlag;
+    }
+
+    public void setTrainerRequestFlag(boolean trainerRequestFlag) {
+        this.trainerRequestFlag = trainerRequestFlag;
+    }
 }
