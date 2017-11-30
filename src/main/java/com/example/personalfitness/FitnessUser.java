@@ -98,11 +98,25 @@ public class FitnessUser {
     private Set<Request> requests;
 
 
+    public Set<Comment> getComments() {
+        return comments;
+    }
+
+    public void setComments(Set<Comment> comments) {
+        this.comments = comments;
+    }
+
+    @OneToMany(mappedBy="user",
+    cascade=CascadeType.ALL,
+    fetch=FetchType.EAGER)
+    public Set<Comment> comments;
+
     public FitnessUser() {
         areas = new ArrayList<String>();
         specialities = new ArrayList<String>();
         roles = new HashSet<UserRole>();
         requests= new HashSet<Request>();
+        comments=new HashSet<Comment>();
         areas.add("Montgomery County");
         areas.add("Frederick County");
         areas.add("Prince George's County");
@@ -247,4 +261,6 @@ public class FitnessUser {
     public void addRequest(Request request){
         requests.add(request);
     }
+
+    public void addComment(Comment comment){comments.add(comment);}
 }
