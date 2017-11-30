@@ -32,7 +32,8 @@
     <nav id="nav2">
         <ul>
             <li><a href="/trainer">Profile</a></li>
-            <li><a href="/trainer">Request Alert</a></li>
+            <li><a href="/trainer" th:if="${user.trainerRequestFlag}" class="bg-danger">Request Alert</a></li>
+            <li><a href="/trainer" th:unless="${user.trainerRequestFlag}" class="bg-warning">Request Alert</a></li>
             <li><a href="/trainer/request">View Request</a></li>
             <li><a href="/trainer">Rate a User</a></li>
             <li><a href="/trainer">Search Users</a></li>
@@ -50,7 +51,7 @@
         <div class="row">
             <div class="4u">
                 <section class="special box_white">
-                    <a href="#" class="image fit"><img src="/images/pic04.jpg" alt=""/></a>
+                    <a href="#" class="image fit"><img th:src="${user.headshot}" alt=""/></a>
                     <h3 th:inline="text">[[${user.firstName}]]</h3>
                     <p th:inline="text">[[${user.email}]]</p>
                     <div  th:inline="text"> [[${user.needOrSpecialty}]]</div><hr class="hr2"/>
@@ -58,12 +59,11 @@
                     <div  th:inline="text"> [[${user.needOrSpecialty}]]</div>
 
                     <ul class="actions">
-                        <li><a href="#" class="button alt">Change picture</a></li>
+                        <li><a href="/user/choosepic" class="button alt">Choose a picture</a></li>
                     </ul>
 
 
                 </section>
-                <hr/>
                 <section class="box_white">
                     <h3 class="special">Rating Average</h3>
                     <hr/>
@@ -78,17 +78,18 @@
             </div>
             <div class="8u skel-cell-important">
 
-                <section class="box_white">
+                <section class="box_white" th:if="${#lists.isEmpty(user.requests)}">
                     <h2><i class="icon2 fa-sticky-note major2"></i>Requests</h2>
                     <hr/>
 
-                    <div th:if="${#lists.isEmpty(user.requests)}">
+                    <div >
                         <h3>No requests received</h3>
                     </div>
+                </section>
+                    <section class="box_white" th:each="request :${user.requests}">
+                    <h2><i class="icon2 fa-sticky-note major2"></i>Request</h2>
 
-                    <div th:each="request :${user.requests}">
-
-                        <div class="row">
+                         <div class="row">
 
                             <label class="4u right"> User Name: </label>
                             <div class="8u">
@@ -120,9 +121,6 @@
                                 <label th:unless="${request.answered}">   <a th:href="@{/trainer/requests/{id}(id=${request.id})}"> <button type="submit" class="btn btn-primary btn-block">Answer Request</button></a></label>
                             </div>
                         </div>
-                        <hr/>
-
-                    </div>
 
                 </section>
 
