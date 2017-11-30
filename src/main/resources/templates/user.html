@@ -32,10 +32,9 @@
     <nav id="nav2">
         <ul>
             <li><a href="/user">Profile</a></li>
-            <li><a href="/user" th:if="${user.userRequestFlag}">New Request</a></li>
-            <li><a href="/user" th:unless="${user.userRequestFlag}"><i class="icon2 fa-bell major4"></i>Request Ale</a></li>
+            <li><a href="/user">Request Alert</a></li>
             <li><a href="/user/request">Add Request</a></li>
-            <li><a href="/user">Rate a Trainer</a></li>
+            <li><a href="/user/comment">Add Comment</a></li>
             <li><a href="/user">List Trainers</a></li>
             <li><a href="/user">Search Trainers</a></li>
             <li><a href="/logout" class="button special">Sign Out</a></li>
@@ -52,43 +51,53 @@
         <div class="row">
             <div class="4u">
                 <section class="special box_white">
-                    <a href="#" class="image fit"><img th:src="${user.headshot}" alt=""/></a>
+                    <a href="#" class="image fit"><img src="/images/pic03.jpg" alt=""/></a>
                     <h3 th:inline="text">[[${user.firstName}]]</h3>
                     <p th:inline="text">[[${user.email}]]</p>
                     <ul class="actions">
-                        <li><a href="/user/choosepic" class="button alt">Choose a picture</a></li>
+                        <li><a href="#" class="button alt">Change picture</a></li>
                     </ul>
                 </section>
+                <hr/>
                 <section class="box_white">
                     <h3 class="special">Rating Average</h3>
                     <hr/>
-                    <ul class="alt">
-                        <li><a href="#">rating1</a></li>
-                        <li><a href="#">rating2</a></li>
-                        <li><a href="#">rating3</a></li>
-                        <li><a href="#">rating4</a></li>
-                        <li><a href="#">rating5</a></li>
-                    </ul>
+                    <div th:each="comment :${user.comments}">
+
+                        <div class="row">
+                            <label class="4u right">Rating: </label>
+                            <div class="8u">
+                                <label th:inline="text">[[${comment.rating}]]</label>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <label class="4u right">Date: </label>
+                            <div class="8u">
+                                <label th:inline="text">[[${comment.posteddate}]]</label>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <label class="4u right">Comment: </label>
+                            <div class="8u">
+                                <label th:inline="text">[[${comment.content}]]</label>
+                            </div>
+                        </div>
+
+                        <hr/>
+                    </div>
                 </section>
             </div>
             <div class="8u skel-cell-important">
-                <div th:if="${#lists.isEmpty(user.requests)}">
 
-                    <section class="box_white">
-                        <h2><i class="icon2 fa-sticky-note major2"></i>Requests</h2>
-                        <hr/>
-
-                        <div th:if="${#lists.isEmpty(user.requests)}">
-                            <h3>** add a request</h3>
-                        </div>
-                    </section>
-                </div>
-
-                <section class="box_white" th:each="request :${user.requests}">
-                    <h2><i class="icon2 fa-sticky-note major2"></i>Request</h2>
+                <section class="box_white">
+                    <h2><i class="icon2 fa-sticky-note major2"></i>Requests</h2>
                     <hr/>
 
-                    <div>
+                    <div th:if="${#lists.isEmpty(user.requests)}">
+                        <h3>** add a request</h3>
+                    </div>
+
+                    <div th:each="request :${user.requests}">
                         <div class="row">
                             <label class="4u right"> Trainer Name: </label>
                             <div class="8u">
@@ -119,6 +128,7 @@
                                 <label th:inline="text">[[${request.status}]]</label>
                             </div>
                         </div>
+                        <hr/>
                     </div>
 
                 </section>

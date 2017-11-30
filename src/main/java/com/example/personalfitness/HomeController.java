@@ -1,19 +1,14 @@
 package com.example.personalfitness;
 
-import com.cloudinary.utils.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.validation.Valid;
-import java.io.IOException;
 import java.security.Principal;
-import java.util.Map;
-
+import java.util.Calendar;
 @Controller
 public class HomeController {
 
@@ -27,7 +22,7 @@ public class HomeController {
     RequestRepository requestRepository;
 
     @Autowired
-    CloudinaryConfig cloudc;
+    CommentRepository commentRepository;
 
     @RequestMapping("/")
     public String index(){
@@ -130,114 +125,58 @@ public class HomeController {
             request.processDate();
             request.processTime();
             request.setStatus("waiting");
-            request.setSenderName(user.getUsername());
-
-            FitnessUser trainer = userRepository.findByUsername(request.getReceiverName());
-            trainer.setTrainerRequestFlag(true);
-
-            System.out.println(trainer.getFirstName());
-
             requestRepository.save(request);
-
             user.addRequest(request);
-            trainer.addRequest(request);
-
             userRepository.save(user);
-            userRepository.save(trainer);
-
             model.addAttribute("user", user);
             return "user";
         }
     }
 
     @RequestMapping("/trainer/requests/{id}")
-    public String showTrainerRequest(@PathVariable("id") long id, Model model){
+    public String showTrainerRequests(@PathVariable("id") long id, Model model){
         model.addAttribute("request", requestRepository.findOne(id));
         return "answerrequest";
     }
 
-    @PostMapping("/trainer/requests/{id}")
-    public String processTrainerRequest(@PathVariable("id") long id, Model model){
-        model.addAttribute("request", requestRepository.findOne(id));
-        return "trainer";
+
+    @RequestMapping("/user/comment")
+    public String showComment(Model model){
+
+        Comment comment = new Comment();
+        model.addAttribute("comment", comment);
+        return "commentform";
     }
-
-
-    @RequestMapping("/user/choosepic")
-    public String choosePicture(Principal principal, Model model){
+    /* ProcessFormText*/
+    @PostMapping("/user/comment")
+    public String processUserComment(Principal principal, @Valid @ModelAttribute("comment") Comment comment,
+                                     BindingResult result, Model model) {
         FitnessUser user = userRepository.findByUsername(principal.getName());
+        if (result.hasErrors()) {
+            System.out.println(result.toString());
+            return "commentform";
+        }
+
+
+        Calendar calendar = Calendar.getInstance();
+        java.sql.Date ourJavaDateObject = new java.sql.Date(calendar.getTime().getTime());
+        String username = principal.getName();
+        FitnessUser user_current = userRepository.findByUsername(username);
+        comment.setUser(user_current);
+        comment.setSentby(comment.getUser().getUsername());
+        comment.setPosteddate(ourJavaDateObject);
+        commentRepository.save(comment);
+        user.addComment(comment);
+        userRepository.save(user);
         model.addAttribute("user", user);
-        return "choosepicture";
-    }
-
-    @PostMapping("/user/choosepic")
-    public String processPicture(Principal principal, MultipartHttpServletRequest request, Model model){
-        FitnessUser user = userRepository.findByUsername(principal.getName());
-        MultipartFile f = request.getFile("imagefile");
-        if (f.isEmpty()) {
-            return "redirect:/user/choosepic";
-        }
-        try{
-            Map uploadResult = cloudc.upload(f.getBytes(), ObjectUtils.asMap("resourcetype", "auto"));
-
-            String uploadURL = (String) uploadResult.get("url");
-            String uploadedName = (String) uploadResult.get("public_id");
-
-            String transformedImage = cloudc.createUrl(uploadedName);
-
-            System.out.println(transformedImage);
-            System.out.println("Uploaded:" + uploadURL);
-            System.out.println("Name:" + uploadedName);
-
-            user.setHeadshot(transformedImage);
-            userRepository.save(user);
-            model.addAttribute("user", user);
-
-        } catch (IOException e) {
-            e.printStackTrace();
-            return "redirect:/user/choosepic";
-        }
-
         return "user";
+
     }
 
-    @RequestMapping("/trainer/choosepic")
-    public String chooseTrainerPicture(Principal principal, Model model){
-        FitnessUser user = userRepository.findByUsername(principal.getName());
-        model.addAttribute("user", user);
-        return "choosepicture";
-    }
 
-    @PostMapping("/trainer/choosepic")
-    public String processTrainerPicture(Principal principal, MultipartHttpServletRequest request, Model model){
-        FitnessUser user = userRepository.findByUsername(principal.getName());
-        MultipartFile f = request.getFile("imagefile");
-        if (f.isEmpty()) {
-            return "redirect:/trainer/choosepic";
-        }
-        try{
-            Map uploadResult = cloudc.upload(f.getBytes(), ObjectUtils.asMap("resourcetype", "auto"));
+/* ProcessFormText*/
 
-            String uploadURL = (String) uploadResult.get("url");
-            String uploadedName = (String) uploadResult.get("public_id");
 
-            String transformedImage = cloudc.createUrl(uploadedName);
-
-            System.out.println(transformedImage);
-            System.out.println("Uploaded:" + uploadURL);
-            System.out.println("Name:" + uploadedName);
-
-            user.setHeadshot(transformedImage);
-            userRepository.save(user);
-            model.addAttribute("user", user);
-
-        } catch (IOException e) {
-            e.printStackTrace();
-            return "redirect:/trainer/choosepic";
-        }
-
-        return "trainer";
-    }
 
 
 }
